@@ -1,0 +1,6 @@
+{
+  "name": "Government Jobs Portal",
+  "description": "A comprehensive web portal for searching, filtering, and tracking active government job listings with personalized eligibility and recommendation matches for applicants.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
