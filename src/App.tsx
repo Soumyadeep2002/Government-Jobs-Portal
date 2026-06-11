@@ -6,11 +6,14 @@ import {
   QUAL_RANKING
 } from "./data";
 import { Job, UserProfile, JobApplication } from "./types";
-import Navbar from "./components/Navbar";
-import FilterPanel from "./components/FilterPanel";
-import JobCard from "./components/JobCard";
-import NotificationSection from "./components/NotificationSection";
-import ProfileTab from "./components/ProfileTab";
+import Navbar from "./components/layout/Navbar";
+import FilterPanel from "./components/jobs/FilterPanel";
+import JobCard from "./components/jobs/JobCard";
+import NotificationSection from "./components/notifications/NotificationSection";
+import ProfileTab from "./components/profile/ProfileTab";
+import AmbientGlow from "./components/effects/AmbientGlow";
+import HeroSection from "./components/home/HeroSection";
+import ValueBentoGrid from "./components/home/ValueBentoGrid";
 import { 
   Building2, MapPin, Landmark, Search, ShieldCheck, 
   Sparkles, Award, ArrowRight, CheckCircle2, Bookmark, CheckSquare, Zap, Clock, TrendingUp
@@ -31,19 +34,6 @@ export default function App() {
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
-
-  // --- Premium Mouse Glow Position Coordinates ---
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
 
   // --- Lazy State Initialization (Prevents hydration/infinite loops) ---
   const [user, setUser] = useState<UserProfile>(() => {
@@ -236,14 +226,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50/60 dark:bg-[#080c14] font-sans text-slate-800 dark:text-slate-200 antialiased selection:bg-indigo-100 selection:text-indigo-800 transition-colors duration-300">
       
       {/* Dynamic Ambient Mouse Glow Field */}
-      <div 
-        className="pointer-events-none fixed inset-0 z-40 transition-all duration-300 opacity-100"
-        style={{
-          background: darkMode
-            ? `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(99, 102, 241, 0.16), rgba(168, 85, 247, 0.1), transparent 70%)`
-            : `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(99, 102, 241, 0.12), rgba(245, 158, 11, 0.06), transparent 70%)`
-        }}
-      />
+      <AmbientGlow darkMode={darkMode} />
 
       {/* 1. Header Navigation */}
       <Navbar 
@@ -272,86 +255,10 @@ export default function App() {
             >
               
               {/* Giant Elegant Hero welcome Section (Apple aesthetics) */}
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6 }}
-                className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-950 text-white p-8 sm:p-12 text-center shadow-xl"
-              >
-                {/* Visual geometric grids */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px] opacity-25" />
-                
-                <div className="relative max-w-3xl mx-auto space-y-6">
-                  
-                  <h1 className="font-sans text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight text-white max-w-4xl mx-auto">
-                    India's Smartest <br className="hidden md:inline" />
-                    <span className="bg-gradient-to-r from-indigo-300 via-purple-200 to-amber-200 bg-clip-text text-transparent">
-                      Government Job Discovery
-                    </span> <br className="hidden md:inline" />
-                    Platform
-                  </h1>
+              <HeroSection />
 
-                  <p className="text-base sm:text-lg text-indigo-100/90 leading-relaxed font-sans max-w-2xl mx-auto">
-                    A comprehensive portal supporting real-time Indian recruitment boards, age relaxation calculations for reserved quotas, and live step-by-step trackers.
-                  </p>
-
-                </div>
-              </motion.div>
-
-              {/* Bento Grid: 3-column value info block (Cred-like clean aesthetic) - Bulletproof Entrance Transitions! */}
-              <motion.div 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
-                className="grid gap-6 md:grid-cols-3 text-left"
-              >
-                
-                {/* Card 1 */}
-                <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xs flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shrink-0 shadow-inner">
-                    <ShieldCheck className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-sans text-sm font-bold text-slate-800 tracking-tight">
-                      Quota Age relaxation
-                    </h3>
-                    <p className="font-sans text-xs text-slate-500 leading-relaxed mt-1.5">
-                      Enter your category status (OBC, SC/ST, PwD) to instantly scale the maximum age limit on all official postings.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Card 2 */}
-                <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xs flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 shrink-0 shadow-inner">
-                    <Zap className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-sans text-sm font-bold text-slate-800 tracking-tight">
-                      Fast-Track Single Sign On
-                    </h3>
-                    <p className="font-sans text-xs text-slate-500 leading-relaxed mt-1.5">
-                      Verify credentials once; our quick-apply interface loads verified states and submits parameters instantly.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Card 3 */}
-                <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xs flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shrink-0 shadow-inner">
-                    <CheckCircle2 className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-sans text-sm font-bold text-slate-800 tracking-tight">
-                      Phase Progress Tracker
-                    </h3>
-                    <p className="font-sans text-xs text-slate-500 leading-relaxed mt-1.5">
-                      Track admit-card dispatches, written exam bookings, physical screenings, and central list publication schedules.
-                    </p>
-                  </div>
-                </div>
-
-              </motion.div>
+              {/* Bento Grid: 3-column value info block (Cred-like clean aesthetic) */}
+              <ValueBentoGrid />
 
               {/* TWO COLUMN ROW: Featured listings (Left 2/3) & Bulletin notifications (Right 1/3) - Bulletproof Entrance Transitions! */}
               <motion.div 

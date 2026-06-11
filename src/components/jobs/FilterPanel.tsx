@@ -1,8 +1,8 @@
 import { Search, MapPin, Briefcase, IndianRupee, ShieldCheck, RefreshCw, X } from "lucide-react";
-import { UserProfile } from "../types";
+import { UserProfile } from "../../types";
 import { motion } from "motion/react";
-import { getAgeRelaxation } from "../data";
-import CustomDropdown from "./CustomDropdown";
+import { getAgeRelaxation } from "../../data";
+import CustomDropdown from "../common/CustomDropdown";
 
 interface FilterPanelProps {
   searchTerm: string;

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { UserProfile, Job, JobApplication } from "../types";
+import { UserProfile, Job, JobApplication } from "../../types";
 import { 
   User, GraduationCap, Briefcase, Tag, Map, HelpCircle, 
   Settings, Bookmark, CheckCircle2, AlertCircle, FileSearch,
   Check, Edit3, ArrowRight, ShieldCheck, Hourglass, Landmark
 } from "lucide-react";
-import { getAgeRelaxation, verifyJobEligibility } from "../data";
-import CustomDropdown from "./CustomDropdown";
+import { getAgeRelaxation, verifyJobEligibility } from "../../data";
+import CustomDropdown from "../common/CustomDropdown";
 
 // Helper to extract short user-friendly names from selection stages
 function getStageShortName(stageStr: string, index: number): string {

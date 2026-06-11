@@ -5,8 +5,8 @@ import {
   ChevronDown, ChevronUp, ExternalLink, Bookmark, HelpCircle, 
   Briefcase, IndianRupee, Layers, BadgeAlert, Trophy
 } from "lucide-react";
-import { Job, UserProfile } from "../types";
-import { verifyJobEligibility, getAgeRelaxation } from "../data";
+import { Job, UserProfile } from "../../types";
+import { verifyJobEligibility, getAgeRelaxation } from "../../data";
 
 interface JobCardProps {
   key?: string | number;

@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { NotificationAlert } from "../types";
+import { NotificationAlert } from "../../types";
 import { Bell, AlertCircle, Award, Calendar, CheckSquare, Sparkles } from "lucide-react";
 
 interface NotificationSectionProps {

@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Briefcase, User, Home, Bell, Landmark, Sun, Moon } from "lucide-react";
-import { UserProfile } from "../types";
+import { UserProfile } from "../../types";
 
 interface NavbarProps {
   currentView: "home" | "jobs" | "profile";
