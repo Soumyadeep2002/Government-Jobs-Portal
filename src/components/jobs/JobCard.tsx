@@ -6,7 +6,7 @@ import {
   Briefcase, IndianRupee, Layers, BadgeAlert, Trophy
 } from "lucide-react";
 import { Job, UserProfile } from "../../types";
-import { verifyJobEligibility, getAgeRelaxation } from "../../data";
+import { verifyJobEligibility, getAgeRelaxation, verifySubPostEligibility, isIndustryEligible } from "../../data";
 
 interface JobCardProps {
   key?: string | number;
@@ -17,6 +17,8 @@ interface JobCardProps {
   isApplied: boolean;
   appliedStatus?: string;
   onApply: (notes?: string) => void;
+  ignoreExperience?: boolean;
+  hideEligibility?: boolean;
 }
 
 export default function JobCard({
@@ -26,11 +28,13 @@ export default function JobCard({
   onToggleBookmark,
   isApplied,
   appliedStatus,
-  onApply
+  onApply,
+  ignoreExperience = false,
+  hideEligibility = false
 }: JobCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { eligible, reasons } = verifyJobEligibility(job, user);
+  const { eligible, reasons } = verifyJobEligibility(job, user, ignoreExperience);
   const userRelaxation = getAgeRelaxation(user.category);
   const effectiveMaxAgeForUser = job.maxAgeGeneral + userRelaxation;
 
@@ -48,9 +52,7 @@ export default function JobCard({
     ? "from-amber-400 to-orange-500 text-white"
     : "from-indigo-50 to-indigo-100/55 text-indigo-700 border border-indigo-100";
 
-  const notificationLink = job.id === "job-2"
-    ? "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2026.pdf"
-    : job.officialLink;
+  const notificationLink = job.pdfLink || job.officialLink;
 
   const applyUrl = job.id === "job-2"
     ? "https://ssc.gov.in/login"
@@ -138,9 +140,15 @@ export default function JobCard({
             {/* Salary Range */}
             <div className="flex items-center gap-1.5">
               <IndianRupee className="h-4 w-4 text-slate-400 shrink-0" />
-              <span className="font-mono text-xs font-bold text-slate-700">
-                ₹{Math.floor(job.salaryMin / 1000)}K - ₹{Math.floor(job.salaryMax / 1000)}K<span className="text-[10px] text-slate-400 font-normal">/mo</span>
-              </span>
+              {job.salaryNotSpecified ? (
+                <span className="font-sans text-xs font-semibold text-slate-500">
+                  Not Available / Not Mentioned in PDF
+                </span>
+              ) : (
+                <span className="font-mono text-xs font-bold text-slate-700">
+                  ₹{Math.floor((job.salaryMin ?? 0) / 1000)}K - ₹{Math.floor((job.salaryMax ?? 0) / 1000)}K<span className="text-[10px] text-slate-400 font-normal">/mo</span>
+                </span>
+              )}
             </div>
 
             {/* Minimum Education Limit */}
@@ -167,16 +175,18 @@ export default function JobCard({
 
           {/* Verification Checker */}
           <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-2 md:border-none md:pt-0">
-            {eligible ? (
-              <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 font-sans text-xs font-bold text-emerald-600 border border-emerald-100">
-                <CheckCircle className="h-3.5 w-3.5" />
-                <span>You are Eligible</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 font-sans text-xs font-bold text-rose-600 border border-rose-100">
-                <AlertTriangle className="h-3.5 w-3.5" />
-                <span>Ineligible (Check Profiler)</span>
-              </div>
+            {!hideEligibility && (
+              eligible ? (
+                <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 font-sans text-xs font-bold text-emerald-600 border border-emerald-100">
+                  <CheckCircle className="h-3.5 w-3.5" />
+                  <span>You are Eligible</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1 rounded-full bg-rose-50 px-2.5 py-1 font-sans text-xs font-bold text-rose-600 border border-rose-100">
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  <span>Ineligible (Check Profiler)</span>
+                </div>
+              )
             )}
 
             {/* Quick Action Buttons */}
@@ -226,7 +236,7 @@ export default function JobCard({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`rounded-xl py-2 px-4 text-xs font-extrabold tracking-tight text-white transition-all shadow-sm cursor-pointer border text-center ${
-                  eligible 
+                  (eligible || hideEligibility) 
                     ? "bg-indigo-600 hover:bg-indigo-700 border-indigo-650 shadow-indigo-100 hover:shadow" 
                     : "bg-slate-800 hover:bg-slate-900 border-slate-850 shadow-slate-100"
                 }`}
@@ -252,6 +262,102 @@ export default function JobCard({
           >
             <div className="mt-5 border-t border-slate-100 pt-5 text-left space-y-4 text-sm" id={`drawer-expanded-${job.id}`}>
               
+              {/* Strategy 3: Nested Job Roles / Sub-Posts Specific Breakdowns */}
+              {job.subPosts && job.subPosts.length > 0 && (
+                <div className="space-y-3 rounded-xl border border-dashed border-indigo-150 bg-indigo-50/5 dark:bg-slate-900/40 p-4" id={`subposts-panel-${job.id}`}>
+                  <div className="flex items-center gap-2">
+                    <span className="p-1 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 font-bold text-xs font-mono">
+                      {job.subPosts.length} Roles
+                    </span>
+                    <h4 className="font-sans text-sm font-extrabold text-indigo-900 dark:text-indigo-300">
+                      Detailed Role-Specific Openings & Eligibility:
+                    </h4>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {(hideEligibility
+                      ? (job.subPosts || [])
+                      : (job.subPosts?.filter((sp) => isIndustryEligible(sp.experienceIndustry, user.experienceIndustry)) || [])
+                    ).map((sp) => {
+                        const spCheck = verifySubPostEligibility(sp, user, false); // Always calculate full eligibility diagnostic
+                        return (
+                        <div 
+                          key={sp.id} 
+                          id={`subpost-${sp.id}`}
+                          className={`rounded-xl border p-3 flex flex-col justify-between space-y-2 bg-white dark:bg-slate-900 transition-all ${
+                            !hideEligibility && spCheck.eligible 
+                              ? "border-emerald-100 bg-emerald-50/10 dark:border-emerald-950/20" 
+                              : "border-slate-100 bg-slate-50/20 dark:border-slate-800"
+                          }`}
+                        >
+                          <div>
+                            <div className="flex items-start justify-between gap-1.5">
+                              <h5 className="font-sans text-xs font-extrabold text-slate-800 dark:text-white leading-tight">
+                                {sp.title}
+                              </h5>
+                              <span className="shrink-0 font-mono text-[10px] font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                                {sp.totalVacancies} Vacs
+                              </span>
+                            </div>
+                            <p className="font-sans text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                              {sp.description}
+                            </p>
+                            <div className="flex flex-wrap gap-1 mt-2 text-[10px]">
+                              <span className="bg-slate-150/40 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded font-medium">
+                                Qual: {sp.minQualification}
+                              </span>
+                              <span className="bg-slate-150/40 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded font-medium">
+                                Age: {sp.minAge}-{sp.maxAgeGeneral}
+                              </span>
+                              <span className="bg-slate-150/40 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded font-medium">
+                                Spec: {sp.stream.join(", ")}
+                              </span>
+                              {sp.experienceRequired !== undefined && sp.experienceRequired > 0 && (
+                                <span className="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider text-[8px] border border-indigo-100 dark:border-indigo-900">
+                                  Exp: {sp.experienceRequired} yr{sp.experienceRequired > 1 ? "s" : ""} ({sp.experienceIndustry || "Any Industry"})
+                                </span>
+                              )}
+                              {sp.typingRequired && (
+                                <span className="bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded font-bold uppercase tracking-wider text-[8px] border border-amber-200 dark:border-amber-900">
+                                  Typing Required
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="border-t border-slate-50 dark:border-slate-800 pt-2 flex items-center justify-between gap-1">
+                            {sp.salaryMin && sp.salaryMax ? (
+                              <span className="font-mono text-[10px] font-bold text-indigo-600 dark:text-indigo-400">
+                                ₹{sp.salaryMin.toLocaleString()}/mo
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-slate-400 italic">Salary: Not Available / Not Mentioned in PDF</span>
+                            )}
+
+                            {!hideEligibility ? (
+                              spCheck.eligible ? (
+                                <span className="font-sans text-[10px] font-bold text-emerald-650 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-250 dark:border-emerald-900 rounded-full px-2 py-0.5 flex items-center gap-1">
+                                  <CheckCircle className="h-3 w-3" />
+                                  Eligible
+                                </span>
+                              ) : (
+                                <span 
+                                  className="font-sans text-[9px] font-medium text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-950 rounded-full px-1.5 py-0.5 inline-block text-right cursor-help"
+                                  title={spCheck.reasons.join("; ")}
+                                >
+                                  {spCheck.reasons[0] && spCheck.reasons[0].length > 30 
+                                    ? `${spCheck.reasons[0].substring(0, 30)}...` 
+                                    : spCheck.reasons[0] || "Ineligible"}
+                                </span>
+                              )
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Detailed Columns Grid */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
@@ -260,9 +366,9 @@ export default function JobCard({
                   </h4>
                   <ul className="space-y-1.5 text-xs text-slate-600 font-medium font-sans">
                     <li>💼 <strong className="text-slate-800">Total Available Vacancies:</strong> {job.totalVacancies.toLocaleString()} posts nationwide</li>
-                    <li>🪙 <strong className="text-slate-800">Exam Fees:</strong> General / OBC: ₹{job.examFeeGeneral} | Reserved: {job.examFeeReserved === 0 ? "Exempted (Free)" : `₹${job.examFeeReserved}`}</li>
+                    <li>🪙 <strong className="text-slate-800">Exam Fees:</strong> {job.id === "job-pune-peoples-bank" ? "Not Available / Not Mentioned in PDF" : job.id === "job-ssc-dept-ldce" ? "General / OBC / EWS: ₹100 | SC / ST / PwD / Women: ₹0 (Exempted)" : job.id === "job-cbi-apprentice-2026" ? "General / OBC: ₹800 + GST | SC / ST / All Women / EWS: ₹600 + GST | PwBD: ₹400 + GST (Exempted)" : `General / OBC: ₹${job.examFeeGeneral} | Reserved: ${job.examFeeReserved === 0 ? "Exempted (Free)" : `₹${job.examFeeReserved}`}`}</li>
                     <li>🎂 <strong className="text-slate-800">Required Age Limits:</strong> {job.minAge} to {job.maxAgeGeneral} years <span className="font-mono text-[10px] text-zinc-400 font-bold">(General limit)</span></li>
-                    <li>⏱️ <strong className="text-slate-800">Reservation Age Relaxation (Your Category):</strong> Maximum age limit for you is <strong className="text-indigo-600">{effectiveMaxAgeForUser}</strong> (including +{userRelaxation} yrs for {user.category})</li>
+                    <li>⏱️ <strong className="text-slate-800">Age Limit:</strong> Maximum age limit for you is <strong className="text-indigo-600">{effectiveMaxAgeForUser}</strong> (including +{userRelaxation} yrs for {user.category})</li>
                     <li>🎓 <strong className="text-slate-800">Acceptable Disciplines:</strong> {job.stream.join(", ")}</li>
                     {job.experienceRequired > 0 && (
                       <li className="text-rose-600 font-bold">⚠️ Requires {job.experienceRequired} Year(s) professional experience.</li>
@@ -301,7 +407,7 @@ export default function JobCard({
               </div>
 
               {/* Ineligibility Diagnostic Logger if deficient */}
-              {!eligible && reasons.length > 0 && (
+              {!hideEligibility && !eligible && reasons.length > 0 && (
                 <div className="bg-rose-50 border border-rose-100 p-3 rounded-xl flex items-start gap-2 text-left">
                   <BadgeAlert className="h-5 w-5 text-rose-500 shrink-0 mt-0.5" />
                   <div>

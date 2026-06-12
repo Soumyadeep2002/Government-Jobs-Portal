@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { 
   MOCK_JOBS, MOCK_NOTIFICATIONS, INITIAL_USER_PROFILE, 
   verifyJobEligibility, calculateJobRecommendationScore, getAgeRelaxation,
-  QUAL_RANKING
+  QUAL_RANKING, isIndustryEligible, getExperienceYearsForIndustry
 } from "./data";
 import { Job, UserProfile, JobApplication } from "./types";
 import Navbar from "./components/layout/Navbar";
@@ -11,6 +11,7 @@ import FilterPanel from "./components/jobs/FilterPanel";
 import JobCard from "./components/jobs/JobCard";
 import NotificationSection from "./components/notifications/NotificationSection";
 import ProfileTab from "./components/profile/ProfileTab";
+import ExamGuideTab from "./components/guide/ExamGuideTab";
 import AmbientGlow from "./components/effects/AmbientGlow";
 import HeroSection from "./components/home/HeroSection";
 import ValueBentoGrid from "./components/home/ValueBentoGrid";
@@ -54,11 +55,12 @@ export default function App() {
   });
 
   // --- Views Navigation ---
-  // "home" | "jobs" | "profile"
-  const [currentView, setView] = useState<"home" | "jobs" | "profile">("home");
+  // "home" | "jobs" | "profile" | "guide"
+  const [currentView, setView] = useState<"home" | "jobs" | "profile" | "guide">("home");
   
-  // Under "jobs" view: "browse" | "recommendations"
-  const [jobsSubTab, setJobsSubTab] = useState<"browse" | "recommendations">("browse");
+  // Under "jobs" view: "browse" | "recommendations" | "active_listings"
+  const [jobsSubTab, setJobsSubTab] = useState<"browse" | "recommendations" | "active_listings">("browse");
+  const [activeListingsSearchTerm, setActiveListingsSearchTerm] = useState("");
 
   // --- Filter states ---
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,6 +69,7 @@ export default function App() {
   const [selectedQual, setSelectedQual] = useState("All");
   const [minMonthlySalary, setMinMonthlySalary] = useState(15000);
   const [showEligibleOnly, setShowEligibleOnly] = useState(false);
+  const [maxExperience, setMaxExperience] = useState<string>("All");
   const [sortBy, setSortBy] = useState("closingSoon");
 
   // --- Home Quick Search Banner ---
@@ -154,8 +157,8 @@ export default function App() {
     // 3. Organization Sector Category
     if (selectedCategory !== "All" && job.category !== selectedCategory) return false;
 
-    // 4. Minimum academic qualification
-    if (selectedQual !== "All") {
+    // 4. Minimum academic qualification (Only filters completely out of list if Match Strict Eligibility Only is active)
+    if (showEligibleOnly && selectedQual !== "All") {
       // Show jobs matching selected qualification or below (ranking-based, e.g. Graduate can apply for 12th/10th Pass)
       const selectedRank = QUAL_RANKING[selectedQual as keyof typeof QUAL_RANKING] || 0;
       const jobRank = QUAL_RANKING[job.minQualification as keyof typeof QUAL_RANKING] || 0;
@@ -163,11 +166,110 @@ export default function App() {
     }
 
     // 5. Min Monthly Salary
-    if (job.salaryMin < minMonthlySalary) return false;
+    if (job.salaryMin !== undefined && job.salaryMin < minMonthlySalary) return false;
 
-    // 6. Strict Profile Eligibility Toggle (matches academic background, age, reservation relaxations, stream, and field of study!)
+    // Candidate Profile Eligibility Conditions (only active if showEligibleOnly is true)
     if (showEligibleOnly) {
-      const { eligible } = verifyJobEligibility(job, user);
+      const activeProfiler = selectedQual !== "All" ? { ...user, qualification: selectedQual } : user;
+
+      // 5b. Academic Stream / Specialization Relevance filter
+      if (activeProfiler.stream !== "Any Field") {
+        const mainMatched = job.stream.some(s => {
+          if (s === "Any Field" || s === "Any Graduate") return true;
+          if (s === "Computer Science" && activeProfiler.stream === "Computer Science") return true;
+          if (s === "Mechanical/Civil/Electrical" && activeProfiler.stream === "Mechanical/Civil/Electrical") return true;
+          if (s === "Science (General)" && (activeProfiler.stream === "Science (General)" || activeProfiler.stream === "Computer Science")) return true;
+          if (s === "Commerce" && activeProfiler.stream === "Commerce") return true;
+          if (s === "Humanities/Arts" && activeProfiler.stream === "Humanities/Arts") return true;
+          if (s === "Law" && activeProfiler.stream === "Law") return true;
+          if (s === "Agriculture" && activeProfiler.stream === "Agriculture") return true;
+          return false;
+        });
+
+        const subMatched = job.subPosts?.some(sp => {
+          return sp.stream.some(s => {
+            if (s === "Any Field" || s === "Any Graduate") return true;
+            if (s === "Computer Science" && activeProfiler.stream === "Computer Science") return true;
+            if (s === "Mechanical/Civil/Electrical" && activeProfiler.stream === "Mechanical/Civil/Electrical") return true;
+            if (s === "Science (General)" && (activeProfiler.stream === "Science (General)" || activeProfiler.stream === "Computer Science")) return true;
+            if (s === "Commerce" && activeProfiler.stream === "Commerce") return true;
+            if (s === "Humanities/Arts" && activeProfiler.stream === "Humanities/Arts") return true;
+            if (s === "Law" && activeProfiler.stream === "Law") return true;
+            if (s === "Agriculture" && activeProfiler.stream === "Agriculture") return true;
+            return false;
+          });
+        });
+
+        if (!mainMatched && !subMatched) return false;
+      }
+
+      // 5c. Candidate Experience Filter
+      // "the experience limit should mean experience of the candidate."
+      // "show all jobs if there is no experience required"
+      if (job.experienceRequired && job.experienceRequired > 0) {
+        const relevanceExp = getExperienceYearsForIndustry(job.experienceIndustry, activeProfiler);
+        if (relevanceExp < job.experienceRequired) return false;
+      }
+      
+      // Check experience for sub-posts if any
+      if (job.subPosts && job.subPosts.length > 0) {
+        const hasExpRequiredSubPost = job.subPosts.some(sp => sp.experienceRequired && sp.experienceRequired > 0);
+        if (hasExpRequiredSubPost) {
+          const matchesAnySubPostExp = job.subPosts.some(sp => {
+            const required = sp.experienceRequired || 0;
+            if (required === 0) return true; // No experience required for this subpost
+            const candExp = getExperienceYearsForIndustry(sp.experienceIndustry, activeProfiler);
+            return candExp >= required;
+          });
+          if (!matchesAnySubPostExp) return false;
+        }
+      }
+
+      // 5d. Languages Known Filter
+      // "give the option to add the languages. which will filter the jobs out if they have any specific requirement. show all jobs if there is no languages required."
+      if (job.languagesRequired && job.languagesRequired.length > 0) {
+        const userLangs = activeProfiler.languagesKnown || [];
+        const hasRequiredLanguage = job.languagesRequired.some(jl => 
+          userLangs.some(ul => ul.toLowerCase().trim() === jl.toLowerCase().trim())
+        );
+        if (!hasRequiredLanguage) return false;
+      }
+      // Check languages required in any sub-posts
+      if (job.subPosts && job.subPosts.length > 0) {
+        const hasLangRequiredSubPost = job.subPosts.some(sp => sp.languagesRequired && sp.languagesRequired.length > 0);
+        if (hasLangRequiredSubPost) {
+          const matchesAnySubPostLang = job.subPosts.some(sp => {
+            const reqs = sp.languagesRequired || [];
+            if (reqs.length === 0) return true; // No language required
+            const userLangs = activeProfiler.languagesKnown || [];
+            return reqs.some(jl => 
+              userLangs.some(ul => ul.toLowerCase().trim() === jl.toLowerCase().trim())
+            );
+          });
+          if (!matchesAnySubPostLang) return false;
+        }
+      }
+
+      // 5e. Typing Speed Filter
+      if (job.typingRequired && job.typingSpeedRequired) {
+        const candSpeed = activeProfiler.typingSpeed || 0;
+        if (candSpeed < job.typingSpeedRequired) return false;
+      }
+      if (job.subPosts && job.subPosts.length > 0) {
+        const hasTypingRequiredSubPost = job.subPosts.some(sp => sp.typingRequired && sp.typingSpeedRequired);
+        if (hasTypingRequiredSubPost) {
+          const matchesAnySubPostTyping = job.subPosts.some(sp => {
+            const reqSpeed = sp.typingSpeedRequired || 0;
+            if (!sp.typingRequired || reqSpeed === 0) return true;
+            const candSpeed = activeProfiler.typingSpeed || 0;
+            return candSpeed >= reqSpeed;
+          });
+          if (!matchesAnySubPostTyping) return false;
+        }
+      }
+
+      // 6. Strict Profile Eligibility Toggle (matches academic background, age, reservation relaxations, stream, and field of study!)
+      const { eligible } = verifyJobEligibility(job, activeProfiler, false); // Do not ignore experience!
       if (!eligible) return false;
     }
 
@@ -180,7 +282,7 @@ export default function App() {
       return new Date(a.closingDate).getTime() - new Date(b.closingDate).getTime();
     }
     if (sortBy === "salaryHigh") {
-      return b.salaryMin - a.salaryMin;
+      return (b.salaryMin ?? 0) - (a.salaryMin ?? 0);
     }
     if (sortBy === "vacanciesHigh") {
       return b.totalVacancies - a.totalVacancies;
@@ -200,6 +302,18 @@ export default function App() {
     };
   }).sort((a, b) => b.score - a.score); // Highest scores first!
 
+  // --- Active Listings (Search-Only without other filters) ---
+  const filteredActiveListingsJobs = MOCK_JOBS.filter((job) => {
+    const input = activeListingsSearchTerm.toLowerCase().trim();
+    if (!input) return true;
+    return (
+      job.title.toLowerCase().includes(input) ||
+      job.agency.toLowerCase().includes(input) ||
+      job.notificationId.toLowerCase().includes(input) ||
+      (job.description && job.description.toLowerCase().includes(input))
+    );
+  });
+
   // --- Reset All Filters ---
   const handleResetFilters = () => {
     setSearchTerm("");
@@ -208,6 +322,7 @@ export default function App() {
     setSelectedQual("All");
     setMinMonthlySalary(15000);
     setShowEligibleOnly(false);
+    setMaxExperience("All");
     setSortBy("closingSoon");
   };
 
@@ -301,6 +416,7 @@ export default function App() {
                         isApplied={applications.some((app) => app.jobId === job.id)}
                         appliedStatus={applications.find((app) => app.jobId === job.id)?.status}
                         onApply={(notes) => handleApplyJob(job.id, notes)}
+                        ignoreExperience={false}
                       />
                     ))}
                   </div>
@@ -333,10 +449,10 @@ export default function App() {
             >
               
               {/* Header Title & Tab selectors (Centered and Enlarged) */}
-              <div className="flex justify-center border-b border-slate-100 pb-4" id="jobs-header-row">
+              <div className="flex flex-col items-center border-b border-slate-100 pb-5 gap-3" id="jobs-header-row">
 
-                {/* TWO tabs for active listings vs Personalized Recommendations */}
-                <div className="inline-flex rounded-2xl bg-slate-100/80 p-1.5 shadow-xs" id="jobs-sub-tabs">
+                {/* THREE tabs for active listings vs Personalized Recommendations */}
+                <div className="inline-flex rounded-2xl bg-slate-100/80 p-1.5 shadow-xs flex-wrap md:flex-nowrap justify-center" id="jobs-sub-tabs">
                   <motion.button
                     onClick={() => setJobsSubTab("browse")}
                     id="btn-subtab-browse"
@@ -348,7 +464,7 @@ export default function App() {
                         : "text-slate-600 hover:text-slate-900 hover:bg-white/40"
                     }`}
                   >
-                    Browse Active Listings ({MOCK_JOBS.length})
+                    Filter Jobs
                   </motion.button>
                   
                   <motion.button
@@ -365,9 +481,29 @@ export default function App() {
                     }`}
                   >
                     <span>Personalized Matches</span>
-                    <span className="inline-flex h-2 w-2 rounded-full bg-indigo-500 animate-ping absolute -top-0.5 -right-0.5" />
+                  </motion.button>
+
+                  <motion.button
+                    onClick={() => setJobsSubTab("active_listings")}
+                    id="btn-subtab-active-listings"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`rounded-xl px-6 py-2.5 text-sm font-bold transition-all duration-200 cursor-pointer ${
+                      jobsSubTab === "active_listings"
+                        ? "bg-white text-indigo-600 shadow-sm"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-white/40"
+                    }`}
+                  >
+                    Browse Active Listings ({MOCK_JOBS.length})
                   </motion.button>
                 </div>
+
+                {/* Guide Text for Tabs with human/literal labeling */}
+                <p className="text-center font-sans text-xs text-slate-500 font-medium">
+                  {jobsSubTab === "browse" && "🔍 Filter Jobs: Search and fine-tune opportunities matching specific regions, salary scales, required experience, and qualification fields."}
+                  {jobsSubTab === "recommendations" && "🌟 Personalized Matches: View recommendations sorted automatically by scanning your custom profile qualifications and preferences."}
+                  {jobsSubTab === "active_listings" && "📋 Browse Active Listings: List all recruitment circulars currently active on the site - use keyword search to highlight matching items."}
+                </p>
               </div>
 
               {/* BROWSE ACTIVE LISTINGS SUBTAB */}
@@ -387,6 +523,8 @@ export default function App() {
                     setMinMonthlySalary={setMinMonthlySalary}
                     showEligibleOnly={showEligibleOnly}
                     setShowEligibleOnly={setShowEligibleOnly}
+                    maxExperience={maxExperience}
+                    setMaxExperience={setMaxExperience}
                     sortBy={sortBy}
                     setSortBy={setSortBy}
                     user={user}
@@ -438,12 +576,13 @@ export default function App() {
                           >
                             <JobCard
                               job={job}
-                              user={user}
+                              user={selectedQual !== "All" ? { ...user, qualification: selectedQual } : user}
                               isBookmarked={bookmarks.includes(job.id)}
                               onToggleBookmark={() => handleToggleBookmark(job.id)}
                               isApplied={applications.some((app) => app.jobId === job.id)}
                               appliedStatus={applications.find((app) => app.jobId === job.id)?.status}
                               onApply={(notes) => handleApplyJob(job.id, notes)}
+                              ignoreExperience={false}
                             />
                           </motion.div>
                         ))}
@@ -551,6 +690,74 @@ export default function App() {
                 </div>
               )}
 
+              {/* BROWSE ACTIVE LISTINGS SUBTAB (Without filters, with search bar) */}
+              {jobsSubTab === "active_listings" && (
+                <div className="space-y-6" id="jobs-active-listings-layout">
+                  {/* Search Bar Block */}
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-xs text-left">
+                    <div className="max-w-2xl">
+                      <label className="block font-sans text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">
+                        Search Active Listings
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={activeListingsSearchTerm}
+                          onChange={(e) => setActiveListingsSearchTerm(e.target.value)}
+                          placeholder="Search job titles, agencies, notification IDs, description keywords..."
+                          className="w-full text-slate-800 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40 px-4 py-3 pl-11 text-sm font-sans font-semibold placeholder:text-slate-400 outline-none focus:border-indigo-550 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/40 transition-all font-semibold"
+                        />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                      </div>
+                      <p className="mt-2 text-[11px] text-slate-400 font-medium font-sans">
+                        Showing all {filteredActiveListingsJobs.length} active announcements in alphabetical order by department. No criteria-matching filters applied here.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Listings Grid */}
+                  {filteredActiveListingsJobs.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-12 text-center" id="listings-empty">
+                      <Search className="mx-auto h-8 w-8 text-slate-300 mb-2" />
+                      <h3 className="font-sans text-sm font-bold text-slate-700 dark:text-slate-300">
+                        No match for "{activeListingsSearchTerm}"
+                      </h3>
+                      <p className="font-sans text-xs text-slate-400 mt-1">
+                        Try modifying your keyword search to discover matching notifications.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4" id="listings-active-grid">
+                      <AnimatePresence>
+                        {filteredActiveListingsJobs.map((job) => (
+                          <motion.div
+                            key={job.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <JobCard
+                              job={job}
+                              user={user}
+                              isBookmarked={bookmarks.includes(job.id)}
+                              onToggleBookmark={() => handleToggleBookmark(job.id)}
+                              isApplied={applications.some((app) => app.jobId === job.id)}
+                              appliedStatus={applications.find((app) => app.jobId === job.id)?.status}
+                              onApply={(notes) => handleApplyJob(job.id, notes)}
+                              ignoreExperience={false}
+                              hideEligibility={true}
+                            />
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  )}
+                </div>
+              )}
+
+
+
             </motion.div>
           )}
 
@@ -584,6 +791,21 @@ export default function App() {
                 onChangeApplications={setApplications}
               />
 
+            </motion.div>
+          )}
+
+          {/* ==================== VIEW D: INTERACTIVE EXAM ROADS GUIDE ==================== */}
+          {currentView === "guide" && (
+            <motion.div
+              key="view-guide"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+              id="view-guide-container"
+            >
+              <ExamGuideTab />
             </motion.div>
           )}
 

@@ -9,6 +9,14 @@ import {
 import { getAgeRelaxation, verifyJobEligibility } from "../../data";
 import CustomDropdown from "../common/CustomDropdown";
 
+const getInitials = (name: string) => {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 0 || !parts[0]) return "";
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+};
+
 // Helper to extract short user-friendly names from selection stages
 function getStageShortName(stageStr: string, index: number): string {
   const s = stageStr.toLowerCase();
@@ -224,9 +232,25 @@ export default function ProfileTab({
   const [qualification, setQualification] = useState(user.qualification);
   const [stream, setStream] = useState(user.stream);
   const [experienceYears, setExperienceYears] = useState(user.experienceYears);
+  const [experienceIndustry, setExperienceIndustry] = useState(user.experienceIndustry || "Banking");
+  const [typingSpeed, setTypingSpeed] = useState(user.typingSpeed || 40);
   const [category, setCategory] = useState(user.category);
   const [statePreference, setStatePreference] = useState(user.statePreference);
   const [roleInput, setRoleInput] = useState(user.preferredRoles.join(", "));
+
+  // Keep local states synced with prop (in case they are altered by filters in parent App)
+  React.useEffect(() => {
+    setFullName(user.fullName);
+    setDob(user.dob);
+    setQualification(user.qualification);
+    setStream(user.stream);
+    setExperienceYears(user.experienceYears);
+    setExperienceIndustry(user.experienceIndustry || "Banking");
+    setTypingSpeed(user.typingSpeed || 40);
+    setCategory(user.category);
+    setStatePreference(user.statePreference);
+    setRoleInput(user.preferredRoles.join(", "));
+  }, [user]);
 
   // Handle DoB change to calculate real age
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -262,9 +286,9 @@ export default function ProfileTab({
     }
     
     const parsedRoles = roleInput
-      .split(",")
-      .map((r) => r.trim())
-      .filter((r) => r.length > 0);
+        .split(",")
+        .map((r) => r.trim())
+        .filter((r) => r.length > 0);
 
     const updated: UserProfile = {
       fullName,
@@ -274,6 +298,8 @@ export default function ProfileTab({
       qualification,
       stream,
       experienceYears: Number(experienceYears),
+      experienceIndustry,
+      typingSpeed: Number(typingSpeed),
       category,
       statePreference,
       preferredRoles: parsedRoles.length > 0 ? parsedRoles : ["Officer"]
@@ -446,7 +472,7 @@ export default function ProfileTab({
           <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-indigo-500 to-indigo-650" />
           
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 text-2xl font-extrabold text-indigo-600 shadow-inner mt-2 uppercase">
-            {user.fullName.substring(0, 2)}
+            {getInitials(user.fullName)}
           </div>
 
           <h3 className="font-sans text-base font-extrabold text-slate-800 mt-3 tracking-tight">
@@ -657,20 +683,54 @@ export default function ProfileTab({
                     )}
                   </div>
 
-                  {/* Experience in years */}
-                  <div>
-                    <label className="block font-sans text-xs font-bold text-slate-500 uppercase mb-1.5">
-                      Post-Academic Work Experience (Years)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="15"
-                      value={experienceYears}
-                      onChange={(e) => setExperienceYears(Number(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono font-semibold outline-none focus:border-indigo-500 bg-slate-50/50"
-                    />
-                  </div>
+                   {/* Experience with Industry & Typing Speed Grid */}
+                   <div className="grid gap-4 sm:grid-cols-3">
+                     <div>
+                       <label className="block font-sans text-xs font-bold text-slate-500 uppercase mb-1.5">
+                         Work Experience (Years)
+                       </label>
+                       <input
+                         type="number"
+                         min="0"
+                         max="25"
+                         value={experienceYears}
+                         onChange={(e) => setExperienceYears(Number(e.target.value))}
+                         className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono font-semibold outline-none focus:border-indigo-500 bg-slate-50/50"
+                       />
+                     </div>
+
+                     <div>
+                       <label className="block font-sans text-xs font-bold text-slate-500 uppercase mb-1.5">
+                         Experience Industry
+                       </label>
+                       <select
+                         value={experienceIndustry}
+                         onChange={(e) => setExperienceIndustry(e.target.value)}
+                         className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-sans font-semibold outline-none focus:border-indigo-500 bg-slate-50/50"
+                       >
+                         <option value="Banking">Banking</option>
+                         <option value="Law">Law / Judicial</option>
+                         <option value="Marketing">Marketing / Sales</option>
+                         <option value="Designing">Designing</option>
+                         <option value="Real Estate">Real Estate / Properties</option>
+                         <option value="Other">Other / Any Industry</option>
+                       </select>
+                     </div>
+
+                     <div>
+                       <label className="block font-sans text-xs font-bold text-slate-500 uppercase mb-1.5">
+                         Typing Speed (WPM)
+                       </label>
+                       <input
+                         type="number"
+                         min="0"
+                         max="120"
+                         value={typingSpeed}
+                         onChange={(e) => setTypingSpeed(Number(e.target.value))}
+                         className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono font-semibold outline-none focus:border-indigo-500 bg-slate-50/50"
+                       />
+                     </div>
+                   </div>
 
                   {/* Preferred Location */}
                   <div>
@@ -756,14 +816,34 @@ export default function ProfileTab({
                   {/* Experience Card */}
                   <div className="p-4 rounded-xl border border-slate-100 space-y-2">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-sans">
-                      Post-Academic Work
+                      Work & Practical Skillset
                     </span>
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="h-5 w-5 text-indigo-500" />
-                      <strong className="text-slate-700 font-sans text-sm">{user.experienceYears} Years Experience</strong>
+                    <div className="flex flex-col gap-1.5 pt-0.5">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="h-4 w-4 text-indigo-500 shrink-0" />
+                        <span className="text-slate-700 font-sans text-xs font-semibold">
+                          <strong className="text-sm font-bold">{user.experienceYears} Years</strong> of Experience
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] bg-slate-100 font-mono font-bold text-slate-600 px-2 py-0.5 rounded-md">
+                          Industry
+                        </span>
+                        <span className="text-xs font-semibold text-slate-600 font-sans">
+                          {user.experienceIndustry || "Banking"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] bg-indigo-50 font-mono font-bold text-indigo-600 px-2 py-0.5 rounded-md">
+                          Typing
+                        </span>
+                        <span className="text-xs font-semibold text-slate-600 font-sans">
+                          {user.typingSpeed || 0} WPM Speed
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-[11px] block text-slate-500 font-medium font-sans">
-                      Preferred States for postings: <strong className="text-slate-600">{user.statePreference}</strong>
+                    <span className="text-[11px] block text-slate-500 font-medium font-sans border-t border-slate-50 pt-1.5 mt-1">
+                      Preferred States for postings: <strong className="text-slate-600 font-bold">{user.statePreference}</strong>
                     </span>
                   </div>
 
@@ -1059,7 +1139,11 @@ export default function ProfileTab({
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[9px]">Salary Match:</span>
-                          <strong className="text-indigo-600">₹{Math.floor(job.salaryMin / 1000)}k/mo</strong>
+                          {job.salaryNotSpecified ? (
+                            <strong className="text-slate-500">Not Specified</strong>
+                          ) : (
+                            <strong className="text-indigo-600">₹{Math.floor((job.salaryMin ?? 0) / 1000)}k/mo</strong>
+                          )}
                         </div>
                         <div>
                           <span className="text-slate-400 block text-[9px]">Diagnosis:</span>

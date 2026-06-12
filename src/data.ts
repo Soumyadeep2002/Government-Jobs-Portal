@@ -8,14 +8,66 @@ export const INITIAL_USER_PROFILE: UserProfile = {
   dob: "2001-08-15", // Age 24 on June 10, 2026
   age: 24,
   qualification: "Graduate",
-  stream: "Computer Science",
-  experienceYears: 1,
+  stream: "Commerce",
+  experienceYears: 7,
+  experienceIndustry: "Banking",
+  typingSpeed: 40,
   category: "OBC", // Entitled to +3 years relaxation
   statePreference: "New Delhi",
-  preferredRoles: ["Software Developer", "Administrative Officer", "Scientific Officer"]
+  preferredRoles: ["Administrative Officer", "Branch Manager", "General Manager"],
+  languagesKnown: ["English", "Hindi"],
+  additionalExperiences: []
 };
 
 export const MOCK_NOTIFICATIONS: NotificationAlert[] = [
+  {
+    id: "notif-nabard-sis-2026",
+    title: "NABARD Student Internship Scheme (SIS) 2026-27",
+    date: "2026-06-10",
+    jobId: "nabard-sis-internship-2026",
+    type: "Latest",
+    description: "NABARD has announced the prestigious Student Internship Scheme (SIS) for 2026-27 offering monthly stipend and allowances."
+  },
+  {
+    id: "notif-nalco-non-executive-2026",
+    title: "NALCO Non-Executive Recruitment 2026",
+    date: "2026-06-12",
+    jobId: "nalco-non-executive-recruitment-2026",
+    type: "Latest",
+    description: "National Aluminium Company Limited (NALCO) has opened online registrations for various Non-Executive positions."
+  },
+  {
+    id: "notif-coal-india-mt-2026",
+    title: "Coal India Limited Management Trainees Recruitment 2026",
+    date: "2026-06-11",
+    jobId: "coal-india-management-trainee-recruitment-2026",
+    type: "Latest",
+    description: "Coal India Limited has announced the openings for 660 Management Trainee vacancies across technical and administrative fields."
+  },
+  {
+    id: "notif-cbi-apprentice-2026",
+    title: "Central Bank of India Apprentice Engagement FY 2026-27",
+    date: "2026-06-06",
+    jobId: "job-cbi-apprentice-2026",
+    type: "Latest",
+    description: "Central Bank of India has published the formal notification for selecting 3,000 corporate apprentice trainees under the Apprentices Act, 1961."
+  },
+  {
+    id: "notif-pune-peoples-bank",
+    title: "Pune People's Bank Clerks & Officers Recruitment",
+    date: "2026-06-08",
+    jobId: "job-pune-peoples-bank",
+    type: "Latest",
+    description: "Pune People's Co-operative Bank Ltd. has released a detailed careers advertisement for junior clerk and officer positions."
+  },
+  {
+    id: "notif-ssc-dept-ldce",
+    title: "New Promotion Notice: SSC Grade 'C' Stenographer LDCE",
+    date: "2026-06-05",
+    jobId: "job-ssc-dept-ldce",
+    type: "Latest",
+    description: "SSC has released the Limited Departmental Competitive Examination (LDCE) scheme and syllabus guidelines for Central Secretariat Service promotions."
+  },
   {
     id: "notif-1",
     title: "UPSC CSE 2026 Prelims Exam Centers Updated",
@@ -57,29 +109,33 @@ export const MOCK_NOTIFICATIONS: NotificationAlert[] = [
 
 export const MOCK_JOBS: Job[] = [
   {
-    id: "job-1",
-    title: "Civil Services Officer (IAS/IPS/IFS)",
-    agency: "Union Public Service Commission (UPSC)",
-    category: "Central",
-    location: "All India (Nationwide)",
-    salaryMin: 56100,
-    salaryMax: 250000,
-    postedDate: "2026-05-15",
-    closingDate: "2026-06-25", // 15 Days left
+    id: "job-cbi-apprentice-2026",
+    title: "Engagement of Apprentices (F.Y. 2026-27)",
+    agency: "Central Bank of India",
+    category: "Banking",
+    location: "All India (Zonal/District Branches)",
+    salaryMin: 15000,
+    salaryMax: 15000,
+    postedDate: "2026-06-06",
+    closingDate: "2026-07-06",
     minQualification: "Graduate",
-    stream: ["Any Field", "Computer Science", "Mechanical/Civil/Electrical", "Science (General)", "Commerce", "Humanities/Arts", "Law"],
-    minAge: 21,
-    maxAgeGeneral: 32,
+    stream: ["Any Field", "Commerce", "Science (General)", "Computer Science", "Humanities/Arts", "Law"],
+    minAge: 20,
+    maxAgeGeneral: 28,
     experienceRequired: 0,
-    totalVacancies: 1056,
-    notificationId: "UPSC-2026-CSE-12",
-    description: "Recruitment to various civil services of the Government of India, including the Indian Administrative Service, Indian Police Service, and Indian Foreign Service representing the highest advisory and administrator roles in the executive branch.",
-    selectionProcess: ["Preliminary Examination (objective)", "Main Written Examination (descriptive)", "Personality Test / Interview"],
-    examDate: "2026-08-16",
-    officialLink: "https://upsc.gov.in",
+    totalVacancies: 3000,
+    notificationId: "CBI-APP-2026-27",
+    description: "Notification for the Engagement of Apprentices under the Apprentices Act, 1961 for F.Y. 2026-27. Candidate should have a Graduate degree in any discipline from a recognized University or equivalent. Active registration on the Apprenticeship portal is required. Training duration is 12 months with a monthly stipend of ₹15,000.",
+    selectionProcess: [
+      "Written Online Examination (Objective type - Quant, Reasoning, English, General Awareness, Computer Knowledge)",
+      "Local Language Vetting Test / Proof (Candidate must be proficient in local language of selected state)",
+      "Document Verification & Medical Fitness Certification"
+    ],
+    officialLink: "https://centralbank.bank.in/en/recruitments",
+    pdfLink: "https://cache.careers360.mobi/media/uploads/froala_editor/files/Notification-for-the-Engagement-of-Apprentices.pdf",
     featured: true,
-    examFeeGeneral: 100,
-    examFeeReserved: 0
+    examFeeGeneral: 800,
+    examFeeReserved: 600
   },
   {
     id: "job-2",
@@ -107,306 +163,327 @@ export const MOCK_JOBS: Job[] = [
     ],
     examDate: "2026-08-20",
     officialLink: "https://ssc.gov.in/login",
+    pdfLink: "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2026.pdf",
     featured: true,
     examFeeGeneral: 100,
     examFeeReserved: 0
   },
   {
-    id: "job-4",
-    title: "Grade B Officer (General Admin)",
-    agency: "Reserve Bank of India (RBI)",
-    category: "Banking",
-    location: "Mumbai, Maharashtra",
-    salaryMin: 108400,
-    salaryMax: 224000,
-    postedDate: "2026-06-01",
-    closingDate: "2026-07-02", // 22 Days left
-    minQualification: "Graduate",
-    stream: ["Any Field", "Commerce", "Science (General)", "Computer Science", "Law"],
-    minAge: 21,
-    maxAgeGeneral: 30,
-    experienceRequired: 0,
-    totalVacancies: 290,
-    notificationId: "RBI-2026-GRADEB",
-    description: "Highest entry-level officer cadre representing corporate governance, managing monetary policy publications, coordinating national bank audits, and handling foreign reserve calculations.",
-    selectionProcess: ["Phase-I Examination (Objective Reasoning & Aptitude)", "Phase-II Economical & English Descriptive Test", "Central Board Interview"],
-    examDate: "2026-08-29",
-    officialLink: "https://rbi.org.in",
-    featured: true,
-    examFeeGeneral: 850,
-    examFeeReserved: 100
-  },
-  {
-    id: "job-5",
-    title: "Scientist 'B' Technical Specialist",
-    agency: "National Informatics Centre (NIC / MeitY)",
+    id: "job-ssc-dept-ldce",
+    title: "Grade 'C' Junior Secretariat Assistant / Lower Division Clerk",
+    agency: "Staff Selection Commission (SSC)",
     category: "Central",
-    location: "All India (Transferable)",
-    salaryMin: 56100,
-    salaryMax: 177500,
-    postedDate: "2026-05-28",
-    closingDate: "2026-06-30", // 20 days left
-    minQualification: "Graduate",
-    stream: ["Computer Science"],
-    minAge: 21,
-    maxAgeGeneral: 30,
-    experienceRequired: 1,
-    totalVacancies: 196,
-    notificationId: "NIC-MEITY-2026",
-    description: "Develop secure software solutions, support public digital clouds (DigiLocker, eWay bills), and provide core high-performance networking setups for all ministries.",
-    selectionProcess: ["Direct Screening Written Test", "System Design & Code Integrity Interview"],
-    examDate: "2026-08-05",
-    officialLink: "https://nic.in",
-    featured: false,
-    examFeeGeneral: 800,
-    examFeeReserved: 0
-  },
-  {
-    id: "job-6",
-    title: "Junior Research Fellow (Aerospace Systems)",
-    agency: "Defence Research and Development Organisation (DRDO)",
-    category: "Central",
-    location: "Pune, Maharashtra",
-    salaryMin: 37000,
-    salaryMax: 54000,
-    postedDate: "2026-05-30",
-    closingDate: "2026-06-15", // 5 Days left
-    minQualification: "B.Tech/B.E.",
-    stream: ["Mechanical/Civil/Electrical", "Computer Science"],
-    minAge: 18,
-    maxAgeGeneral: 28,
-    experienceRequired: 0,
-    totalVacancies: 15,
-    notificationId: "DRDO-ADE-JRF",
-    description: "Undertake highly experimental defense prototypes, drone stabilization calculations, and composite alloy test procedures at defense research facilities.",
-    selectionProcess: ["CBT Aptitude Evaluation", "Lab Presentation & Viva Voce"],
-    examDate: "2026-07-10",
-    officialLink: "https://drdo.gov.in",
-    featured: false,
-    examFeeGeneral: 100,
-    examFeeReserved: 0
-  },
-  {
-    id: "job-7",
-    title: "Probationary Officer (SBI PO)",
-    agency: "State Bank of India",
-    category: "Banking",
-    location: "All India (State Circles)",
-    salaryMin: 65000,
-    salaryMax: 115000,
-    postedDate: "2026-06-05",
-    closingDate: "2026-07-15", // 35 Days left
-    minQualification: "Any Graduate",
-    stream: ["Any Field", "Commerce", "Humanities/Arts", "Science (General)"],
-    minAge: 21,
-    maxAgeGeneral: 30,
-    experienceRequired: 0,
-    totalVacancies: 2000,
-    notificationId: "SBI-PO-2026-04",
-    description: "Core banking operations, credit appraisal files management, treasury interactions, customer facing management, and branch cash custody supervisor roles.",
-    selectionProcess: ["SBI Prelims Test", "SBI Main Examinations with Descriptive Essay", "Group Exercises & Panel Interview"],
-    examDate: "2026-09-02",
-    officialLink: "https://sbi.co.in",
-    featured: true,
-    examFeeGeneral: 750,
-    examFeeReserved: 0
-  },
-  {
-    id: "job-8",
-    title: "Section Officer (Nall-PSU Executive)",
-    agency: "National Power Grid Corporation (POWERGRID)",
-    category: "PSU",
-    location: "Gurugram, Haryana",
-    salaryMin: 60000,
-    salaryMax: 180000,
-    postedDate: "2026-06-02",
-    closingDate: "2026-07-10", // 30 Days left
-    minQualification: "B.Tech/B.E.",
-    stream: ["Mechanical/Civil/Electrical"],
-    minAge: 18,
-    maxAgeGeneral: 29,
-    experienceRequired: 1,
-    totalVacancies: 65,
-    notificationId: "PGCIL-2026-EXEC",
-    description: "Supervise regional high-voltage transmission substation grids, electrical switchyard upgrades, power distribution balancing algorithms and telemetry units monitoring.",
-    selectionProcess: ["National GATE Score screening", "Group Discussion", "Executive panel assessment Interview"],
-    examDate: "2026-08-11",
-    officialLink: "https://powergrid.in",
-    featured: false,
-    examFeeGeneral: 500,
-    examFeeReserved: 0
-  },
-  {
-    id: "job-9",
-    title: "Deputy Collector / State Administrative Services",
-    agency: "State Public Service Commission",
-    category: "State",
-    location: "Mumbai & major Districts",
-    salaryMin: 56100,
-    salaryMax: 185000,
-    postedDate: "2026-05-25",
-    closingDate: "2026-06-20", // 10 Days left
-    minQualification: "Graduate",
-    stream: ["Any Field", "Humanities/Arts", "Commerce", "Science (General)", "Law"],
-    minAge: 19,
-    maxAgeGeneral: 38, // Usually higher state PSC limits
-    experienceRequired: 0,
-    totalVacancies: 180,
-    notificationId: "MPSC-STATE-2026-02",
-    description: "Direct management of sub-district land revenue collections, law and order coordination, disaster management directives, and supervision of village authorities.",
-    selectionProcess: ["State Prelims CBT", "SPSC Main Subjective Exams", "Interview Board Session"],
-    examDate: "2026-09-17",
-    officialLink: "https://mpsc.gov.in",
-    featured: false,
-    examFeeGeneral: 500,
-    examFeeReserved: 250
-  },
-  {
-    id: "job-10",
-    title: "Senior Administrative Trainee",
-    agency: "Oil and Natural Gas Corporation (ONGC)",
-    category: "PSU",
-    location: "Dehradun, Uttarakhand",
-    salaryMin: 90000,
-    salaryMax: 240000,
-    postedDate: "2026-05-18",
-    closingDate: "2026-06-15", // 5 Days left
-    minQualification: "Post Graduate",
-    stream: ["Commerce", "Humanities/Arts", "Any Field"],
-    minAge: 21,
-    maxAgeGeneral: 30,
-    experienceRequired: 0,
-    totalVacancies: 110,
-    notificationId: "ONGC-TRAINEE-2026",
-    description: "Undertake strategic administration management, corporate compliance auditing, local environment community relations and oil lease procurement files processing.",
-    selectionProcess: ["UGC NET qualifying score screening", "Group Dynamics Test", "Interview board"],
-    officialLink: "https://ongcindia.com",
-    featured: false,
-    examFeeGeneral: 300,
-    examFeeReserved: 0
-  },
-  {
-    id: "job-11",
-    title: "Technical Executive Officer (Naval Command)",
-    agency: "Indian Navy (Defence Service)",
-    category: "Defence",
-    location: "Visakhapatnam, Andhra Pradesh",
-    salaryMin: 85000,
-    salaryMax: 190000,
-    postedDate: "2026-05-22",
-    closingDate: "2026-06-16", // 6 Days left
-    minQualification: "Graduate",
-    stream: ["Mechanical/Civil/Electrical", "Computer Science"],
-    minAge: 19,
-    maxAgeGeneral: 24, // Very strict age limit!
-    experienceRequired: 0,
-    totalVacancies: 48,
-    notificationId: "NAVY-TECH-2026-I",
-    description: "Commissioned as Sub-Lieutenant to manage marine propulsion mechanics, digital warship systems networking, and naval communication relays upkeep.",
-    selectionProcess: ["SSB (Service Selection Board) 5-Day psychological & physical tests", "Special Intelligence Medical Test Board"],
-    examDate: "2026-07-28",
-    officialLink: "https://joinindiannavy.gov.in",
-    featured: true,
-    examFeeGeneral: 0,
-    examFeeReserved: 0
-  },
-  {
-    id: "job-12",
-    title: "Deputy Manager (Information Security)",
-    agency: "National Bank for Agriculture (NABARD)",
-    category: "Banking",
-    location: "Delhi/Mumbai Head Offices",
-    salaryMin: 95000,
-    salaryMax: 210000,
-    postedDate: "2026-06-03",
-    closingDate: "2026-07-24", // 44 Days left
-    minQualification: "Graduate",
-    stream: ["Computer Science"],
-    minAge: 25, // older minimum
-    maxAgeGeneral: 35,
-    experienceRequired: 3, // Requires 3 years experience!
-    totalVacancies: 35,
-    notificationId: "NABARD-2026-MGR",
-    description: "Govern agricultural bank digital operations integrity, conduct penetration testing on regional rural banking applications, and manage malware mitigation suites.",
-    selectionProcess: ["Specialist Written Exam with practical lab", "Senior Board Interview Panel"],
-    examDate: "2026-09-10",
-    officialLink: "https://nabard.org",
-    featured: false,
-    examFeeGeneral: 800,
-    examFeeReserved: 150
-  },
-  {
-    id: "job-13",
-    title: "Station Master (RRB NTPC)",
-    agency: "Indian Railways (Railway Recruitment Board)",
-    category: "Railway",
-    location: "Zonal Railway Hubs (All India)",
-    salaryMin: 35400,
-    salaryMax: 112000,
-    postedDate: "2026-05-28",
-    closingDate: "2026-06-30", // 20 Days left
-    minQualification: "Graduate",
-    stream: ["Any Field", "Mechanical/Civil/Electrical", "Science (General)", "Computer Science", "Commerce", "Humanities/Arts"],
-    minAge: 18,
-    maxAgeGeneral: 33,
-    experienceRequired: 0,
-    totalVacancies: 4210,
-    notificationId: "RRB-CEN-NTPC-2026",
-    description: "Manage safety of daily train tracking, coordinate station signals operations, schedule pilot duties, handle emergency blockages, and oversee platforms maintenance.",
-    selectionProcess: ["Stage 1 CBT (General Aptitude)", "Stage 2 CBT (Subjective Reasoning)", "Computer-Based Aptitude Test (CBAT - Psycho)", "Medical Examination"],
-    examDate: "2026-10-04",
-    officialLink: "https://rrbcdg.gov.in",
-    featured: false,
-    examFeeGeneral: 500,
-    examFeeReserved: 250
-  },
-  {
-    id: "job-14",
-    title: "Secondary School Assistant Clerk",
-    agency: "Staff Selection Commission",
-    category: "Central",
-    location: "Regional State Offices",
+    location: "New Delhi (Central Secretariat)",
     salaryMin: 19900,
     salaryMax: 63200,
-    postedDate: "2026-06-01",
-    closingDate: "2026-06-15", // 5 Days left
-    minQualification: "12th Pass",
-    stream: ["Any Field", "Commerce", "Humanities/Arts", "Science (General)"],
+    postedDate: "2026-06-05",
+    closingDate: "2026-06-26",
+    minQualification: "Graduate/12th Pass",
+    stream: ["Any Field", "Commerce", "Science (General)", "Computer Science", "Humanities/Arts", "Law"],
     minAge: 18,
-    maxAgeGeneral: 27,
-    experienceRequired: 0,
-    totalVacancies: 820,
-    notificationId: "SSC-CHSL-2026-CLK",
-    description: "Responsible for register maintenance, physical file transfers, computer typing speed records, standard government letters indexing and customer counters assistance.",
-    selectionProcess: ["Tier 1 CBT Screen", "English/Hindi Speed Typing Skill Diagnostic"],
+    maxAgeGeneral: 50,
+    experienceRequired: 3,
+    totalVacancies: 227,
+    notificationId: "SSC-LDCE-2026-STENO",
+    description: "The SSC Senior Secretariat Assistant (SSA) / Upper Division Clerk (UDC) LDCE is a Limited Departmental Competitive Examination conducted by the Staff Selection Commission. It is strictly an internal promotion exam for eligible central government employees to advance their careers, rather than an open recruitment for the general public",
+    selectionProcess: [
+      "Competitive Paper-1 objective evaluation (English comprehension, General awareness)",
+      "Noting, Drafting & Office Procedure (Conventional type)"
+    ],
+    examDate: "2026-09-05",
     officialLink: "https://ssc.gov.in",
-    featured: false,
+    pdfLink: "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/departmental_notice_05062026.pdf",
+    featured: true,
     examFeeGeneral: 100,
     examFeeReserved: 0
   },
   {
-    id: "job-15",
-    title: "Postman / Mail Delivery Assistant",
-    agency: "India Post (Ministry of Communications)",
-    category: "Central",
-    location: "All India Zonal Postal Circles",
-    salaryMin: 21700,
-    salaryMax: 69100,
-    postedDate: "2026-06-02",
-    closingDate: "2026-06-25", // 15 Days left
-    minQualification: "10th Pass",
-    stream: ["Any Field"],
-    minAge: 18,
-    maxAgeGeneral: 27,
+    id: "job-pune-peoples-bank",
+    title: "General Manager, Branch Manager & Assistant Officer Openings",
+    agency: "Pune People's Co-operative Bank Ltd.",
+    category: "Banking",
+    location: "Pune, Maharashtra",
+    salaryNotSpecified: true,
+    postedDate: "2026-06-08",
+    closingDate: "2026-06-30",
+    minQualification: "Graduate",
+    stream: ["Commerce", "Any Field", "Law", "Computer Science"],
+    minAge: 20,
+    maxAgeGeneral: 45,
     experienceRequired: 0,
-    totalVacancies: 18500,
-    notificationId: "POST-AIP-2026-08",
-    description: "Deliver physical communications, speed post registered packages, manage registered local biometric verifications, and coordinate cash handling for India Post Payments Bank.",
-    selectionProcess: ["Automated academic grade indexing", "Basic local dialect vetting examination"],
-    officialLink: "https://indiapost.gov.in",
-    featured: false,
+    totalVacancies: 33,
+    notificationId: "PPCBL-REC-2026-06",
+    description: "Detailed recruitment advertisement for various executive, managerial, and clerical positions across Pune People's Co-operative Bank Ltd. The selection comprises 12 distinct functional designations. Eligible applicants can apply based on post-specific age limits and academic streams.",
+    selectionProcess: [
+      "Not Available in primary PDF advertisement. Please refer to official application guidelines."
+    ],
+    officialLink: "https://www.punepeoples.bank.in",
+    pdfLink: "https://www.punepeoples.bank.in/assets/careers/Required_20260608.pdf",
+    featured: true,
+    examFeeGeneral: 0,
+    examFeeReserved: 0,
+    subPosts: [
+      {
+        id: "ppcb-gm",
+        title: "General Manager",
+        minQualification: "Graduate",
+        stream: ["Commerce", "Any Field"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 2,
+        experienceRequired: 10,
+        experienceIndustry: "Banking",
+        description: "Requires at least 10 years of experience in the Banking industry."
+      },
+      {
+        id: "ppcb-dgm",
+        title: "Dy. General Manager",
+        minQualification: "Graduate",
+        stream: ["Commerce", "Any Field"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 4,
+        experienceRequired: 7,
+        experienceIndustry: "Banking",
+        description: "Requires at least 7 years of experience in the Banking industry."
+      },
+      {
+        id: "ppcb-dgm-law",
+        title: "Deputy General Manager- (Chief Law Officer)",
+        minQualification: "Graduate",
+        stream: ["Law"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 1,
+        experienceRequired: 15,
+        experienceIndustry: "Law",
+        description: "Requires a minimum of 15 years of court experience (Law)."
+      },
+      {
+        id: "ppcb-agm",
+        title: "Assistant General Manager",
+        minQualification: "Graduate",
+        stream: ["Commerce", "Any Field"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 4,
+        experienceRequired: 7,
+        experienceIndustry: "Banking",
+        description: "Requires at least 7 years of experience in the Banking industry."
+      },
+      {
+        id: "ppcb-agm-inv",
+        title: "Assistant General Manager (Investment)",
+        minQualification: "Graduate",
+        stream: ["Commerce"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 1,
+        experienceRequired: 7,
+        experienceIndustry: "Banking",
+        description: "Requires at least 7 years of experience in the Banking industry (Investment/Treasury specialty)."
+      },
+      {
+        id: "ppcb-bm",
+        title: "Branch Manager",
+        minQualification: "Graduate",
+        stream: ["Commerce", "Any Field"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 10,
+        experienceRequired: 7,
+        experienceIndustry: "Banking",
+        description: "Requires a minimum of 7 years of experience in the Banking industry."
+      },
+      {
+        id: "ppcb-bm-sec",
+        title: "Branch Manager (Board Secretary)",
+        minQualification: "Graduate",
+        stream: ["Law", "Commerce", "Any Field"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 1,
+        experienceRequired: 5,
+        experienceIndustry: "any industry",
+        description: "Requires at least 5 years of secretarial or executive experience in any industry."
+      },
+      {
+        id: "ppcb-bm-estate",
+        title: "Branch Manager (Estate Manager)",
+        minQualification: "Graduate",
+        stream: ["Any Field"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 1,
+        experienceRequired: 5,
+        experienceIndustry: "Real Estate/Banking",
+        description: "Requires a minimum of 5 years of experience in either Real Estate or Banking, or both."
+      },
+      {
+        id: "ppcb-bm-legal",
+        title: "Branch Manager (Legal Officer)",
+        minQualification: "Graduate",
+        stream: ["Law"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 3,
+        experienceRequired: 10,
+        experienceIndustry: "Law",
+        description: "Requires at least 10 years of professional experience in Law."
+      },
+      {
+        id: "ppcb-abm-mkt",
+        title: "Assistant Branch Managers (Marketing)",
+        minQualification: "Graduate",
+        stream: ["Any Field", "Commerce", "Humanities/Arts"],
+        minAge: 20,
+        maxAgeGeneral: 45,
+        totalVacancies: 2,
+        experienceRequired: 2,
+        experienceIndustry: "Marketing",
+        description: "Requires a minimum of 2 years of experience in Marketing."
+      },
+      {
+        id: "ppcb-abm-gd",
+        title: "Assistant Branch Managers (Graphic Designer)",
+        minQualification: "Graduate",
+        stream: ["Any Field", "Computer Science"],
+        minAge: 20,
+        maxAgeGeneral: 35,
+        totalVacancies: 2,
+        experienceRequired: 1,
+        experienceIndustry: "Designing",
+        description: "Requires a minimum of 1 year of professional experience in Designing."
+      },
+      {
+        id: "ppcb-abm-st",
+        title: "Assistant Branch Managers(Steno/ Typist)",
+        minQualification: "Graduate",
+        stream: ["Any Field"],
+        minAge: 20,
+        maxAgeGeneral: 35,
+        totalVacancies: 2,
+        typingRequired: true,
+        typingSpeedRequired: 40,
+        experienceRequired: 2,
+        experienceIndustry: "Banking",
+        description: "Requires at least 2 years of experience in the Banking industry with a typing speed of 40 wpm."
+      }
+    ]
+  },
+  {
+    id: "coal-india-management-trainee-recruitment-2026",
+    title: "Recruitment of Management Trainees (MT)",
+    agency: "Coal India Limited",
+    category: "Central",
+    location: "All India (Transferable)",
+    salaryMin: 60000,
+    salaryMax: 180000,
+    postedDate: "2026-05-05",
+    closingDate: "2026-06-11",
+    minQualification: "Graduate",
+    stream: ["Engineering", "Computer Science", "Science (General)", "Humanities/Arts", "Any Field"],
+    minAge: 18,
+    maxAgeGeneral: 30,
+    experienceRequired: 0,
+    totalVacancies: 660,
+    notificationId: "Advertisement No. 03/2026",
+    description: "Coal India Limited invites online applications from energetic and promising candidates for the recruitment of Management Trainees in E-1 grade. Recruitment offers excellent research and operational career growth within a premier public sector undertaking.",
+    selectionProcess: [
+      "Computer Based Online Test (CBT)",
+      "Document Verification (DV)",
+      "Initial Medical Examination (IME)"
+    ],
+    officialLink: "https://cdn.digialm.com/EForms/configuredHtml/1258/97495/Index.html",
+    pdfLink: "https://g03.tcsion.com//per/g03/pub/726/EForms/image/ImageDocUpload/71161/5/1501287760.pdf",
+    featured: true,
+    examFeeGeneral: 1180,
+    examFeeReserved: 0
+  },
+  {
+    id: "nalco-non-executive-recruitment-2026",
+    title: "Recruitment of Non-Executive Posts",
+    agency: "National Aluminium Company Limited (NALCO)",
+    category: "PSU",
+    location: "Odisha / Pan India",
+    salaryMin: 29500,
+    salaryMax: 90000,
+    postedDate: "2026-05-14",
+    closingDate: "2026-06-15",
+    minQualification: "Graduate/12th Pass",
+    stream: ["Engineering", "Science", "Any Field", "Commerce"],
+    minAge: 18,
+    maxAgeGeneral: 30,
+    experienceRequired: 0,
+    totalVacancies: 189,
+    notificationId: "Advt. No. Code 10260213",
+    description: "National Aluminium Company Limited (NALCO) invites online applications for various Non-Executive positions. Selected trainees have career paths in production, maintenance, and finance.",
+    selectionProcess: [
+      "Written Test (Computer Based Online Test - CBT covering Quant, reasoning, general knowledge)",
+      "Trade Test / Skill Test (where applicable based on discipline)",
+      "Document Verification & Pre-Employment Medical Examination"
+    ],
+    officialLink: "https://ibpsreg.ibps.in/nalconeapr26/",
+    pdfLink: "https://mudira.nalcoindia.co.in/iorms/Uploaded_Data/Advertisement/639144655968105605_Final%20Adv%2010260213%2014%20May2026.pdf",
+    featured: true,
     examFeeGeneral: 100,
     examFeeReserved: 0
+  },
+  {
+    id: "nabard-sis-internship-2026",
+    title: "Student Internship Scheme (SIS) 2026-27",
+    agency: "National Bank for Agriculture and Rural Development (NABARD)",
+    category: "Banking",
+    location: "Mumbai (Head Office) / Pan India (Regional Offices)",
+    salaryMin: 20000,
+    salaryMax: 20000,
+    postedDate: "2026-06-10",
+    closingDate: "2026-06-16",
+    minQualification: "Graduate",
+    stream: ["Agriculture", "Commerce", "Humanities/Arts", "Science (General)", "Any Field"],
+    minAge: 18,
+    maxAgeGeneral: 35,
+    experienceRequired: 0,
+    totalVacancies: 39,
+    notificationId: "NABARD Student Internship Scheme (SIS) 2026-27",
+    description: "NABARD invites applications for the Student Internship Scheme (SIS) 2026-27 from PG/PGDM students (completing 1st year) or 5-year Integrated course students (completing 4th year) in Agriculture, Allied Disciplines (Veterinary, Fisheries, etc.), Agri-business, Economics, Agri-economics, Social Sciences, and Management. Indian students studying abroad are also eligible. Selected interns must study one of these five NABARD interventions: (a) Women Farmers in Indian Agriculture: Opportunities, Issues & Way Forward, (b) PACS Computerization Operational Efficiency, (c) FPOs Impact Assessment, Sustainability & Market Linkage, (d) Impact of GI Registration - Post registration opportunities & challenges, or (e) Rural Women Entrepreneurs migrating from SHG to Individual Venture. Remuneration includes a ₹20,000/month stipend (for 8 to 12 weeks), Field Visit Allowance of ₹2,000/day (NER States) or ₹1,500/day (other states) for up to 30 days, Travel Allowance of up to ₹6,000, and Miscellaneous Expenses of ₹2,000 on declaration basis.",
+    selectionProcess: [
+      "Shortlisting for interview on the basis of a weighted score system based on marks in 10th, 12th, and Graduation.",
+      "Final selection is solely on the basis of the personal interview performance (tentatively completed by June 22, 2026)."
+    ],
+    officialLink: "https://forms.gle/y5j9Ad1CQWLpzRRN8",
+    pdfLink: "https://www.nabard.org/auth/writereaddata/WhatsNew/pub_1006260942621858.pdf?csrt=9162878479887398804",
+    featured: true,
+    examFeeGeneral: 0,
+    examFeeReserved: 0,
+    subPosts: [
+      {
+        id: "nabard-sis-ho",
+        title: "Head Office Intern (Mumbai)",
+        minQualification: "Graduate",
+        stream: ["Agriculture", "Commerce", "Humanities/Arts", "Science (General)", "Any Field"],
+        minAge: 18,
+        maxAgeGeneral: 35,
+        totalVacancies: 5,
+        salaryMin: 20000,
+        salaryMax: 20000,
+        experienceRequired: 0,
+        description: "Open to eligible students across the entire country. Stationed at the Head Office in Mumbai."
+      },
+      {
+        id: "nabard-sis-ro-te",
+        title: "Regional Office (RO) / Training Establishment (TE) Intern",
+        minQualification: "Graduate",
+        stream: ["Agriculture", "Commerce", "Humanities/Arts", "Science (General)", "Any Field"],
+        minAge: 18,
+        maxAgeGeneral: 35,
+        totalVacancies: 34,
+        salaryMin: 20000,
+        salaryMax: 20000,
+        experienceRequired: 0,
+        description: "Exactly 01 seat allocated per RO/TE. Applicants must be either pursuing their PG/integrated degree from that State or be an ordinary resident (belong to) that State."
+      }
+    ]
   }
 ];
 
@@ -428,12 +505,151 @@ export const QUAL_RANKING = {
   "Graduate": 3,
   "Any Graduate": 3,
   "B.Tech/B.E.": 3,
+  "Graduate/12th Pass": 2,
+  "Graduate/12th pass": 2,
   "Post Graduate": 4,
   "PhD": 5
 };
 
+export function isIndustryEligible(requiredIndustry: string | undefined, candidateIndustry: string | undefined): boolean {
+  if (!candidateIndustry || candidateIndustry === "All" || candidateIndustry.toLowerCase() === "all" || candidateIndustry.toLowerCase() === "any industry" || candidateIndustry.toLowerCase() === "any") return true;
+  if (!requiredIndustry || requiredIndustry.trim() === "" || requiredIndustry.toLowerCase() === "any industry" || requiredIndustry.toLowerCase() === "any") {
+    return true; // No specific requirement, shown irrespective of filter selected
+  }
+  
+  const req = requiredIndustry.toLowerCase();
+  const cand = candidateIndustry.toLowerCase();
+  
+  if (req === cand) return true;
+  
+  // Custom check for Real Estate/Banking
+  if (req.includes("real estate") && req.includes("banking")) {
+    if (cand === "banking" || cand === "real estate") return true;
+  }
+  
+  return false;
+}
+
+export function getExperienceYearsForIndustry(requiredIndustry: string | undefined, profile: UserProfile): number {
+  let total = 0;
+  
+  // Checking primary experience
+  if (isIndustryEligible(requiredIndustry, profile.experienceIndustry)) {
+    total += profile.experienceYears;
+  }
+  
+  // Checking additional experiences
+  if (profile.additionalExperiences && profile.additionalExperiences.length > 0) {
+    for (const exp of profile.additionalExperiences) {
+      if (isIndustryEligible(requiredIndustry, exp.industry)) {
+        total += exp.years;
+      }
+    }
+  }
+  
+  return total;
+}
+
+export function verifySubPostEligibility(subPost: any, profile: UserProfile, ignoreExperience?: boolean): { eligible: boolean; reasons: string[] } {
+  const reasons: string[] = [];
+  
+  // 1. Age check
+  const relaxation = getAgeRelaxation(profile.category);
+  const effectiveMaxAge = subPost.maxAgeGeneral + relaxation;
+  if (profile.age < subPost.minAge) {
+    reasons.push(`Min age required is ${subPost.minAge}, you are ${profile.age}.`);
+  }
+  if (profile.age > effectiveMaxAge) {
+    reasons.push(`Max age with relaxation (+${relaxation} yrs) is ${effectiveMaxAge}, you are ${profile.age}.`);
+  }
+
+  // 2. Qual Rank check
+  const userRank = QUAL_RANKING[profile.qualification] || 0;
+  const subRank = QUAL_RANKING[subPost.minQualification as keyof typeof QUAL_RANKING] || 0;
+  if (userRank < subRank) {
+    reasons.push(`Req: ${subPost.minQualification}, you have ${profile.qualification}.`);
+  }
+
+  // 3. Tech check
+  if (subPost.minQualification === "B.Tech/B.E." && profile.qualification !== "B.Tech/B.E.") {
+    if (profile.stream !== "Computer Science" && profile.stream !== "Mechanical/Civil/Electrical") {
+      reasons.push(`Requires professional B.Tech/B.E. degree.`);
+    }
+  }
+
+  // 4. Stream check
+  const requiresSpecificStream = subPost.stream.length > 0 && !subPost.stream.includes("Any Field") && !subPost.stream.includes("Any Graduate");
+  if (requiresSpecificStream) {
+    const streamMatched = subPost.stream.some((s: string) => {
+      if (s === "Computer Science" && profile.stream === "Computer Science") return true;
+      if (s === "Mechanical/Civil/Electrical" && profile.stream === "Mechanical/Civil/Electrical") return true;
+      if (s === "Science (General)" && (profile.stream === "Science (General)" || profile.stream === "Computer Science")) return true;
+      if (s === "Commerce" && profile.stream === "Commerce") return true;
+      if (s === "Humanities/Arts" && profile.stream === "Humanities/Arts") return true;
+      if (s === "Law" && profile.stream === "Law") return true;
+      if (s === "Agriculture" && profile.stream === "Agriculture") return true;
+      return false;
+    });
+    if (!streamMatched) {
+      reasons.push(`Req Stream: ${subPost.stream.join(", ")}, you have ${profile.stream}.`);
+    }
+  }
+
+  // 5. Experience
+  const expNeeded = subPost.experienceRequired || 0;
+  const requiredIndustry = subPost.experienceIndustry;
+
+  if (!ignoreExperience && expNeeded > 0) {
+    const candidateExpForSubPost = getExperienceYearsForIndustry(requiredIndustry, profile);
+    if (candidateExpForSubPost < expNeeded) {
+      reasons.push(`Req ${expNeeded} yrs of ${requiredIndustry || "any"} experience, you have ${candidateExpForSubPost} yrs total.`);
+    }
+  }
+
+  // Typing Speed Check
+  if (subPost.typingRequired && subPost.typingSpeedRequired) {
+    const userSpeed = profile.typingSpeed || 0;
+    if (userSpeed < subPost.typingSpeedRequired) {
+      reasons.push(`Req speed ${subPost.typingSpeedRequired} wpm, you have ${userSpeed} wpm.`);
+    }
+  }
+
+  // Languages Required Check
+  if (subPost.languagesRequired && subPost.languagesRequired.length > 0) {
+    const userLanguages = profile.languagesKnown || [];
+    const hasRequiredLanguage = subPost.languagesRequired.some(jl => 
+      userLanguages.some(ul => ul.toLowerCase().trim() === jl.toLowerCase().trim())
+    );
+    if (!hasRequiredLanguage) {
+      reasons.push(`Requires language proficiency in: ${subPost.languagesRequired.join(", ")}, you configured: ${userLanguages.join(", ") || "None"}.`);
+    }
+  }
+
+  return {
+    eligible: reasons.length === 0,
+    reasons
+  };
+}
+
 // Returns boolean indicating eligibility and a string array of failed reasons if not eligible
-export function verifyJobEligibility(job: Job, profile: UserProfile): { eligible: boolean; reasons: string[] } {
+export function verifyJobEligibility(job: Job, profile: UserProfile, ignoreExperience?: boolean): { eligible: boolean; reasons: string[] } {
+  // If the job has sub-posts, user is eligible for the overarching job if eligible for AT LEAST ONE subPost!
+  if (job.subPosts && job.subPosts.length > 0) {
+    const eligibleSubposts = job.subPosts.filter(sp => verifySubPostEligibility(sp, profile, ignoreExperience).eligible);
+    if (eligibleSubposts.length > 0) {
+      return { eligible: true, reasons: [] };
+    } else {
+      const allReasons = job.subPosts.map(sp => {
+        const check = verifySubPostEligibility(sp, profile, ignoreExperience);
+        return `[${sp.title}]: ${check.reasons.join(", ")}`;
+      });
+      return {
+        eligible: false,
+        reasons: ["Does not match criteria for any sub-posts:", ...allReasons]
+      };
+    }
+  }
+
   const reasons: string[] = [];
   
   // 1. Check Age limits with relaxation
@@ -472,6 +688,7 @@ export function verifyJobEligibility(job: Job, profile: UserProfile): { eligible
       if (s === "Commerce" && profile.stream === "Commerce") return true;
       if (s === "Humanities/Arts" && profile.stream === "Humanities/Arts") return true;
       if (s === "Law" && profile.stream === "Law") return true;
+      if (s === "Agriculture" && profile.stream === "Agriculture") return true;
       return false;
     });
     if (!streamMatched) {
@@ -480,8 +697,22 @@ export function verifyJobEligibility(job: Job, profile: UserProfile): { eligible
   }
 
   // 5. Experience years check
-  if (profile.experienceYears < job.experienceRequired) {
-    reasons.push(`Requires at least ${job.experienceRequired} years of experience, you have ${profile.experienceYears} year(s).`);
+  if (!ignoreExperience && job.experienceRequired > 0) {
+    const candidateExpForJob = getExperienceYearsForIndustry(job.experienceIndustry, profile);
+    if (candidateExpForJob < job.experienceRequired) {
+      reasons.push(`Requires at least ${job.experienceRequired} years of ${job.experienceIndustry || "any"} experience, you have ${candidateExpForJob} year(s) matching.`);
+    }
+  }
+
+  // Languages Required Check
+  if (job.languagesRequired && job.languagesRequired.length > 0) {
+    const userLanguages = profile.languagesKnown || [];
+    const hasRequiredLanguage = job.languagesRequired.some(jl => 
+      userLanguages.some(ul => ul.toLowerCase().trim() === jl.toLowerCase().trim())
+    );
+    if (!hasRequiredLanguage) {
+      reasons.push(`Requires language proficiency in: ${job.languagesRequired.join(", ")}, you configured: ${userLanguages.join(", ") || "None"}.`);
+    }
   }
 
   return {

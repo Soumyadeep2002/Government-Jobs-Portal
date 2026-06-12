@@ -1,10 +1,18 @@
 import { motion } from "motion/react";
-import { Briefcase, User, Home, Bell, Landmark, Sun, Moon } from "lucide-react";
+import { Briefcase, User, Home, Bell, Landmark, Sun, Moon, GraduationCap } from "lucide-react";
 import { UserProfile } from "../../types";
 
+const getInitials = (name: string) => {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 0 || !parts[0]) return "";
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+};
+
 interface NavbarProps {
-  currentView: "home" | "jobs" | "profile";
-  setView: (view: "home" | "jobs" | "profile") => void;
+  currentView: "home" | "jobs" | "profile" | "guide";
+  setView: (view: "home" | "jobs" | "profile" | "guide") => void;
   user: UserProfile;
   notificationsCount: number;
   darkMode: boolean;
@@ -21,8 +29,8 @@ export default function Navbar({
 }: NavbarProps) {
   const navItems = [
     { id: "home", label: "Home", icon: Home },
-    { id: "jobs", label: "Jobs", icon: Briefcase },
-    { id: "profile", label: "Profile", icon: User },
+    { id: "jobs", label: "Live Exams", icon: Briefcase },
+    { id: "guide", label: "Exams", icon: GraduationCap },
   ] as const;
 
   // Modern functional color coding of category tag of the user
@@ -144,9 +152,9 @@ export default function Navbar({
                 <Icon className={`relative z-10 h-4.5 w-4.5 transition-transform duration-300 ${isActive ? "scale-110 rotate-0" : "scale-100 group-hover:scale-105"}`} />
                 <span className="relative z-10 hidden sm:inline">{item.label}</span>
                 
-                {/* profile red pulsing dot indicator or similar micro-accent */}
-                {item.id === "profile" && (
-                  <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-indigo-500 animate-ping" />
+                {/* pulsing dot indicator over Live Exams */}
+                {item.id === "jobs" && (
+                  <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-rose-500 animate-ping" />
                 )}
 
                 {/* Micro Underscore indicator synchronized via Framer Motion */}
@@ -210,7 +218,7 @@ export default function Navbar({
           >
             {/* Custom Interactive Avatar Ring */}
             <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-[11px] font-extrabold text-white shadow-xs uppercase leading-none">
-              {user.fullName.substring(0, 2)}
+              {getInitials(user.fullName)}
               <span className="absolute -bottom-0.5 -right-0.5 block h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
             </div>
 
